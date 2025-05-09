@@ -1,16 +1,11 @@
 import uasyncio
 import machine
+from models.plant import Plant
+from models.weather import Weather
 
 
-def execute_iluminating(plant, weather):
-    _determine_ilumination_time(weather.get_wather())
-
-
-def _determine_ilumination_time(clouds, sunrise, sunset):
-    return [
-        (clouds[hour] > 20 or (hour < sunrise or hour > sunset))
-        for hour in range(_deterimine_ilumination_hours(sunrise, sunset))
-    ]
+def execute_iluminating(plant: Plant, weather: Weather):
+    uasyncio.create_task(_illumination_scheduler(plant, weather))
 
 
 def _deterimine_ilumination_hours(sunrise, sunset):
@@ -28,15 +23,11 @@ def _deterimine_ilumination_hours(sunrise, sunset):
     return start, end + 1
 
 
-async def _turn_lights_on_for(plant, time):
-    ilumination_type = _determine_ilumination_type(plant)
-    for color, pin in ilumination_type:
-        machine.Pin(plant.light_pins[color], machine.Pin.OUT).on()
-
-    await uasyncio.sleep(time)
-
-    for color, pin in ilumination_type:
-        machine.Pin(plant.light_pins[color], machine.Pin.OUT).off()
+def _determine_ilumination_time(clouds, sunrise, sunset):
+    return [
+        (clouds[hour] > 20 or (hour < sunrise or hour > sunset))
+        for hour in range(_deterimine_ilumination_hours(sunrise, sunset))
+    ]
 
 
 def _determine_ilumination_type(plant):
@@ -50,11 +41,24 @@ def _determine_ilumination_type(plant):
         return ["blue"]
 
 
-async def illumination_scheduler(plant, illumination_hours):
+async def _turn_lights_on_for(plant, time):
+    ilumination_type = _determine_ilumination_type(plant)
+    for color, pin in ilumination_type:
+        machine.Pin(plant.light_pins[color], machine.Pin.OUT).on()
+
+    await uasyncio.sleep(time)
+
+    for color, pin in ilumination_type:
+        machine.Pin(plant.light_pins[color], machine.Pin.OUT).off()
+
+
+async def _illumination_scheduler(plant, weather):
     last_value = False
     counter = 0 - machine.RTC().datetime()[4]
 
-    for value in illumination_hours:
+    for value in _determine_ilumination_time(
+        weather.get_clouds(), weather.get_sunrise(), weather.get_sunset()
+    ):
         if value == last_value:
             counter += 1
         else:

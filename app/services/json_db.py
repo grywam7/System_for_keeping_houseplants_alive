@@ -1,27 +1,27 @@
 import ujson
 import os
-from models.plant_types import Plant
+from models.plant import Plant
 
 
 class PlantRepo:
-    def _filename(self, plant_id: int) -> str:
-        return "plant_{}.json".format(plant_id)
+    def _filename(self, pot_index: int) -> str:
+        return "plant_{}.json".format(pot_index)
 
-    async def load(self, plant_id: int) -> Plant:
+    async def load(self, pot_index: int) -> Plant:
         try:
-            with open(self._filename(plant_id), "r") as f:
+            with open(self._filename(pot_index), "r") as f:
                 data = ujson.load(f)
             return Plant.from_dict(data)
         except Exception as e:
-            print("Błąd odczytu rośliny {}:".format(plant_id), e)
+            print("Błąd odczytu rośliny {}:".format(pot_index), e)
             return None
 
     async def save(self, plant: Plant) -> None:
         try:
-            with open(self._filename(plant.plant_id), "w") as f:
+            with open(self._filename(plant.pot_index), "w") as f:
                 ujson.dump(plant.to_dict(), f)
         except Exception as e:
-            print("Błąd zapisu rośliny {}:".format(plant.plant_id), e)
+            print("Błąd zapisu rośliny {}:".format(plant.pot_index), e)
 
     async def load_all(self) -> list:
         plants = []
@@ -40,3 +40,7 @@ class PlantRepo:
         # Save each plant individually
         for plant in plants:
             await self.save(plant)
+
+
+# class PlantTypeRepo:
+# to do

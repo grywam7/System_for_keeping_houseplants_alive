@@ -4,6 +4,14 @@ import network
 import socket
 import ssl
 import ntptime
+from services.json_db import PlantRepo
+
+# from services.json_db import PlantTypeRepo
+from present_state import PLANTS
+# from present_state import PLANT_TYPES
+
+# from task_scheduler import TaskScheduler
+from services.web_server import run_web_server
 
 ILUMINATION_START = 6
 ILUMINATION_DURATION = 14
@@ -11,9 +19,11 @@ ILUMINATION_DURATION = 14
 
 # while True:
 def main():
-    _connect_to_wifi("Orange-Brzoza", "KopytkoBrzozy")
-    _connect_to_wifi("AGH-5", "dAZNmmwh4x")
-    _calculate_ilumination_hours()
+    PLANTS[:] = PlantRepo.load_all()
+    # PLANT_TYPES[:] = PlantTypeRepo.load_all()
+    # wifi_monitor()
+    # TaskScheduler.start()
+    run_web_server()
 
 
 # zainicjować roślinke ? ale przez api
@@ -21,17 +31,6 @@ def main():
 # a następnie konsultować to z roślinką żęby określić czy potrzebuje niebieskie czy czernowne światło
 # określić jak zarządzać tym światłem?
 
-
 # PRIVATE METHODS
 
-
-def _connect_to_wifi(name, password):
-    wlan = network.WLAN(network.STA_IF)
-    wlan.active(True)
-    wlan.ifconfig(("192.168.1.105", "255.255.255.0", "192.168.1.1", "192.168.1.1"))
-    if not wlan.isconnected():
-        print("connecting to network...")
-        wlan.connect(name, password)
-        while not wlan.isconnected():
-            machine.idle()
-    print("network config:", wlan.ipconfig("addr4"))
+# async def wifi_monitor():

@@ -1,5 +1,4 @@
 import machine
-from ulab import numpy as np
 
 
 class Plant:
@@ -10,7 +9,7 @@ class Plant:
         pump_pin,
         moisture_sensor_pin,
         light_pins,
-        plant_type,
+        plant_type=None,  # TO DO, do zmiany
         water_taget=1750,
         planted_on=machine.RTC().datetime()[:3],
         is_flowering=False,
@@ -39,10 +38,11 @@ class Plant:
 
         # SETUP moisture sensor
         # with this setting, wery vet is 1600 (literally water in pot) and dry is 3500
-        moisture_sensor = machine.ADC(machine.Pin(self.moisture_sensor_pin))
-        moisture_sensor.atten(machine.ADC.ATTN_11DB)  # 0-3.3V
-        moisture_sensor.width(machine.ADC.WIDTH_12BIT)  # 12-bit resolution: 0-4095
-        self.moisture_sensor = moisture_sensor
+        # moisture_sensor = machine.ADC(machine.Pin(self.moisture_sensor_pin))
+        # moisture_sensor.atten(machine.ADC.ATTN_11DB)  # 0-3.3V
+        # moisture_sensor.width(machine.ADC.WIDTH_12BIT)  # 12-bit resolution: 0-4095
+        # self.moisture_sensor = moisture_sensor
+        self.moisture_sensor = None
 
     @classmethod
     def from_dict(cls, data: dict) -> "Plant":
@@ -52,6 +52,7 @@ class Plant:
             pump_pin=data.get("pump_pin"),
             moisture_sensor_pin=data.get("moisture_sensor_pin"),
             light_pins=data.get("light_pins"),
+            plant_type=data.get("plant_type"),  # TO DO
             water_taget=data.get("moisture_target"),
             planted_on=data.get("planted_on"),
             is_flowering=data.get("is_flowering"),
