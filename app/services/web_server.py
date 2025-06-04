@@ -2,7 +2,8 @@ from microdot import Microdot, Response, send_file, redirect
 from services.websites_generator import generate_plants_cards
 from services.json_db import PlantRepo
 from models.plant import Plant
-from present_state import PLANTS, find_plant_by, remove_plant
+from present_state import plants, find_plant_by, remove_plant
+from services.websites_generator import generate_logs_site
 import network
 import uasyncio
 import ujson
@@ -45,8 +46,9 @@ async def add_new_plant(req):
         "planted_on": p.get("planted_on"),
     }
     print("add_new_plant", data)
-    PLANTS.append(Plant.from_dict(data))
-    await PlantRepo().save_all(PLANTS)
+    new_plant = Plant.from_dict(data)
+    plants.append(new_plant)
+    await PlantRepo().save(new_plant)
     return redirect("/plants")
 
 
@@ -128,3 +130,7 @@ async def get_plants(req):
 #         return Response(ujson.dumps(plant.to_dict()), content_type="application/json")
 #     else:
 #         return Response("Plant not found", status=404)
+
+@app.get("/log")
+async def get_log(req):
+    generate_logs_site()

@@ -107,7 +107,3 @@ class Plant:
         else:
             if self.fruiting_history and self.fruiting_history[-1]["end"] is None:
                 self.fruiting_history[-1]["end"] = machine.RTC().datetime()[:3]
-
-
-# dorobić klase z rodzajem rośliny
-# dorobić aplikacje webową do zarządzania roślinami

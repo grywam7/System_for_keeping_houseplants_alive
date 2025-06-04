@@ -1,4 +1,5 @@
 from services.json_db import PlantRepo
+from services.json_db import Log
 
 # from services.json_db import PlantTypeRepo
 from models.plant import Plant
@@ -50,3 +51,46 @@ def generate_plants_cards(plants: list) -> str:
 # TODO: implement this function
 # This function should generate a detailed HTML page for a single plant
 # using the plant's data.
+
+
+def generate_logs_site() -> str:
+    html_header = """<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Log reports</title>
+  <style>
+    table {
+      margin: 1em;
+    }
+    table, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+  </style>
+</head>
+<body>
+<h1>Log Reports</h1>
+<table>
+    <th>
+        <td>Time Stamp</td>
+        <td>Name</td>
+        <td>Message</td>
+        <td>Additional Info</td>
+    </th>
+"""
+    html_footer = """
+</table>
+</body>
+</html>
+"""
+    body = ""
+    for log in Log.load_all():
+        body += f"""<tr>
+    <td>{log.timestamp}</td>
+    <td>{log.name}</td>
+    <td>{log.message}</td>
+    <td>{log.info}</td>
+</tr>"""
+
+    return html_header + body + html_footer

@@ -1,23 +1,25 @@
 import uasyncio
 import machine
+import math
 from models.plant import Plant
 from models.weather import Weather
 
 
-def execute_iluminating(plant: Plant, weather: Weather):
-    uasyncio.create_task(_illumination_scheduler(plant, weather))
+async def execute_iluminating(plant: Plant, weather: Weather):
+    await _illumination_scheduler(plant, weather)
 
 
 def _deterimine_ilumination_hours(sunrise, sunset):
     if sunset - sunrise < 14:
-        hour_difference = (sunset - sunrise / 2).round_up()
+        hour_difference = math.ceil((sunset - sunrise) / 2)
         start = sunrise - hour_difference
         end = sunset + hour_difference
     else:
         start = sunrise
         end = sunrise + 14
 
-    if start > 9 or end > 23:  # w przypadku jakiegoś błedu/super długiego dnia
+    # w przypadku jakiegoś super długiego dnia/błędnych danych z api
+    if start > 9 or end > 23:
         start = 5
         end = 19
     return start, end + 1

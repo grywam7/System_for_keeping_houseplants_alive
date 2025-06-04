@@ -1,5 +1,6 @@
 import ujson
 import os
+import machine
 from models.plant import Plant
 
 
@@ -44,3 +45,35 @@ class PlantRepo:
 
 # class PlantTypeRepo:
 # to do
+
+
+class Log:
+    async def add(
+        self, name: str, message: str, additional_info: dict
+    ) -> None:  ## zrobić żeby dodawała na koniec pliku
+        try:
+            current_log = self.load_all
+            if current_log.__len__ > 20:
+                current_log.pop
+            current_log.append(
+                {
+                    "name": name,
+                    "message": message,
+                    "info": additional_info,
+                    "timestamp": machine.RTC().datetime()[:7],
+                },
+            )
+            with open("/log.json", "w") as f:
+                ujson.dump(
+                    current_log,
+                    f,
+                )
+        except Exception as e:
+            print("Błąd zapisu loga!? {}:".format(name + ", " + message), e)
+
+    async def load_all(self) -> list:
+        try:
+            with open("/log.json", "r") as f:
+                return ujson.load(f)
+        except Exception as e:
+            print("Błąd odczytu loga:", e)

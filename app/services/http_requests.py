@@ -2,7 +2,7 @@ import socket
 import ssl
 
 
-async def http_get(url: str, https: bool = False):
+def http_get(url: str, https: bool = False):
     _, _, host, path = url.split("/", 3)
     if https:
         addr = socket.getaddrinfo(host, 443)[0][-1]
