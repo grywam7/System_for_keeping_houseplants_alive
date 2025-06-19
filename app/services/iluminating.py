@@ -25,9 +25,9 @@ def _deterimine_ilumination_hours(sunrise, sunset):
     return start, end + 1
 
 
-def _determine_ilumination_time(clouds, sunrise, sunset):
+def _determine_ilumination_time(sunshine, sunrise, sunset):
     return [
-        (clouds[hour] > 20 or (hour < sunrise or hour > sunset))
+        (sunshine[hour] < 3300 or (hour < sunrise or hour > sunset))
         for hour in range(_deterimine_ilumination_hours(sunrise, sunset))
     ]
 
@@ -58,9 +58,7 @@ async def _illumination_scheduler(plant, weather):
     last_value = False
     counter = 0 - machine.RTC().datetime()[4]
 
-    for value in _determine_ilumination_time(
-        weather.get_clouds(), weather.get_sunrise(), weather.get_sunset()
-    ):
+    for value in _determine_ilumination_time(**weather.get_weather()):
         if value == last_value:
             counter += 1
         else:

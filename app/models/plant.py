@@ -10,7 +10,7 @@ class Plant:
         moisture_sensor_pin,
         light_pins,
         plant_type=None,  # TO DO, do zmiany
-        water_taget=1750,
+        moisture_target=1750,
         planted_on=machine.RTC().datetime()[:3],
         is_flowering=False,
         is_fruiting=False,
@@ -26,7 +26,7 @@ class Plant:
         self.moisture_sensor_pin = moisture_sensor_pin
         self.light_pins = light_pins
         self.plant_type = plant_type  # TO DO, żeby zapisywać ID plant type
-        self.moisture_target = water_taget
+        self.moisture_target = moisture_target
         self.planted_on = planted_on
         self.is_flowering = is_flowering
         self.is_fruiting = is_fruiting
@@ -46,6 +46,7 @@ class Plant:
 
     @classmethod
     def from_dict(cls, data: dict) -> "Plant":
+        return cls(**data)
         return cls(
             plant_name=data.get("plant_name"),
             pot_index=data.get("pot_index"),
@@ -53,7 +54,7 @@ class Plant:
             moisture_sensor_pin=data.get("moisture_sensor_pin"),
             light_pins=data.get("light_pins"),
             plant_type=data.get("plant_type"),  # TO DO
-            water_taget=data.get("moisture_target"),
+            moisture_target=data.get("moisture_target"),
             planted_on=data.get("planted_on"),
             is_flowering=data.get("is_flowering"),
             is_fruiting=data.get("is_fruiting"),
@@ -65,6 +66,7 @@ class Plant:
         )
 
     def to_dict(self):
+        return dict(self.__dict__)
         return {
             "plant_name": self.plant_name,
             "pot_index": self.pot_index,

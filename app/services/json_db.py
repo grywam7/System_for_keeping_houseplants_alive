@@ -49,7 +49,7 @@ class PlantRepo:
 
 class Log:
     async def add(
-        self, name: str, message: str, additional_info: dict
+        self, name: str, message: str, additional_info: dict = None
     ) -> None:  ## zrobić żeby dodawała na koniec pliku
         try:
             current_log = self.load_all

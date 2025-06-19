@@ -5,16 +5,8 @@ class PlantType:
         self.ilumination_time = ilumination_time
 
     def to_dict(self) -> dict:
-        return {
-            "name": self.name,
-            "water_requirements": self.water_requirements,
-            "light_requirements": self.light_requirements,
-        }
+        return dict(self.__dict__)
 
     @classmethod
     def from_dict(cls, data: dict) -> "PlantType":
-        return cls(
-            name=data.get("name"),
-            water_requirements=data.get("water_requirements"),
-            light_requirements=data.get("light_requirements"),
-        )
+        return cls(**data)

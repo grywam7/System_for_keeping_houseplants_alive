@@ -6,15 +6,11 @@ The ``microdot`` module defines a few classes that help implement HTTP-based
 servers for MicroPython and standard Python.
 """
 
-import asyncio
+import uasyncio as asyncio
 import io
 import re
 import time
-
-try:
-    import orjson as json
-except ImportError:
-    import json
+import ujson as json
 
 try:
     from inspect import iscoroutinefunction, iscoroutine

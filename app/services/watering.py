@@ -2,7 +2,6 @@ import machine
 import time
 import uasyncio
 import math
-from typing import List, Tuple
 from models.plant import Plant
 
 
@@ -68,7 +67,7 @@ def _read_moisture(plant: Plant) -> int:
 
 
 # ---------- 1. very small helper : 3×3 linear solver (Gaussian) ---------
-def _solve_3x3(M: List[List[float]], b: List[float]) -> Tuple[float, float, float]:
+def _solve_3x3(M, b):
     """Gaussian elimination for a 3x3 system  M·x = b  ->  returns (x0,x1,x2)."""
     # forward elimination -------------------------------------------------
     for i in range(3):
@@ -95,7 +94,7 @@ def _solve_3x3(M: List[List[float]], b: List[float]) -> Tuple[float, float, floa
 
 
 # ---------- 2. quadratic least‑squares fit (a, b, c) --------------------
-def _polyfit_quadratic(xs: List[float], ys: List[float]) -> Tuple[float, float, float]:
+def _polyfit_quadratic(xs, ys):
     """Return (a, b, c) for y = a·x² + b·x + c  (ordinary least squares)."""
     n = float(len(xs))
     Sx = Sy = Sx2 = Sx3 = Sx4 = Sxy = Sx2y = 0.0
