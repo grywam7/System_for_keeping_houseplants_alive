@@ -1,8 +1,7 @@
 import machine
-import time
 import uasyncio
-import math
 from models.plant import Plant
+from services.json_db import Log
 
 
 async def execute_watering(plant: Plant):
@@ -51,12 +50,18 @@ def _calculate_watering(plant: Plant) -> int:
 
 async def _run_water_pump(plant: Plant):
     pump = machine.Pin(plant.pump_pin, machine.Pin.OUT)
+    Log.add("watering", "Running water pump", {"plant": plant.pot_index})
     watering_duration = _calculate_watering(plant)
     if watering_duration > 0:
         pump.on()
         await uasyncio.sleep(watering_duration)
         pump.off()
     plant.last_watering_duration = watering_duration
+    Log.add(
+        "watering",
+        "Watering completed",
+        {"plant": plant.pot_index, "watering_duration": watering_duration},
+    )
 
 
 def _read_moisture(plant: Plant) -> int:

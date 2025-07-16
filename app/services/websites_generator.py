@@ -1,4 +1,3 @@
-from services.json_db import PlantRepo
 from services.json_db import Log
 import utime
 
@@ -115,6 +114,22 @@ def _make_svg_line(vals, w=150, h=50, color="#2a6"):
     ) % (w, h, w, h, color, " ".join(pts))
 
 
+def _median(values: list[int]) -> int | None:
+    """
+    Return the median of a list of integers, or None if empty.
+    Uses integer division for even-length lists.
+    """
+    if not values:
+        return None
+    s = sorted(values)
+    n = len(s)
+    mid = n // 2
+    if n % 2:
+        return s[mid]
+    # even count: average the two middle values
+    return (s[mid - 1] + s[mid]) // 2
+
+
 def _median_gap(history):
     """Return median gap (days) between consecutive events in list of {"start","end"}."""
     dates = [h["start"] for h in history]
@@ -142,6 +157,14 @@ def _median_gap(history):
         )
         gaps.append((t_b - t_a) // 86400)
     return _median(gaps)
+
+
+def _dt_tuple_to_str(dt: tuple) -> str:
+    """
+    Convert an 8-tuple from utime.localtime() into 'YYYY-MM-DD' string.
+    """
+    year, month, day = dt[0], dt[1], dt[2]
+    return f"{year:04d}-{month:02d}-{day:02d}"
 
 
 def _predict_next(history):

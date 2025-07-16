@@ -1,5 +1,6 @@
 import socket
 import ssl
+from services.json_db import Log
 
 
 def http_get(url: str):
@@ -20,6 +21,7 @@ def http_get(url: str):
     )
     data = s.read()
     s.close()
+    Log.add("http_get", "Request sent", {"url": url, "response_length": len(data)})
     if data:
         return data.decode("utf8")
     else:

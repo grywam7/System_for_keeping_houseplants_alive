@@ -14,7 +14,9 @@ class PlantRepo:
                 data = ujson.load(f)
             return Plant.from_dict(data)
         except Exception as e:
-            print("Błąd odczytu rośliny {}:".format(pot_index), e)
+            Log.add(
+                "json_db - PlantRepo", f"Błąd odczytu rośliny {pot_index}", f"error:{e}"
+            )
             return None
 
     async def save(self, plant: Plant) -> None:
@@ -22,7 +24,11 @@ class PlantRepo:
             with open(self._filename(plant.pot_index), "w") as f:
                 ujson.dump(plant.to_dict(), f)
         except Exception as e:
-            print("Błąd zapisu rośliny {}:".format(plant.pot_index), e)
+            Log.add(
+                "json_db - PlantRepo",
+                f"Błąd zapisu rośliny {plant.pot_index}",
+                f"error:{e}",
+            )
 
     async def load_all(self) -> list:
         plants = []
@@ -34,13 +40,17 @@ class PlantRepo:
                         data = ujson.load(f)
                     plants.append(Plant.from_dict(data))
         except Exception as e:
-            print("Błąd odczytu wszystkich roślin:", e)
+            Log.add("json_db - PlantRepo", "Błąd odczytu wszystkich roślin", str(e))
         return plants
 
     async def save_all(self, plants: list) -> None:
         # Save each plant individually
         for plant in plants:
             await self.save(plant)
+            Log.add(
+                "json_db - PlantRepo",
+                f"Roślina {plant.pot_index} zapisana pomyślnie",
+            )
 
 
 # class PlantTypeRepo:
@@ -48,28 +58,26 @@ class PlantRepo:
 
 
 class Log:
-    async def add(
-        self, name: str, message: str, additional_info: dict = None
-    ) -> None:  ## zrobić żeby dodawała na koniec pliku
+    async def add(self, name: str, message: str, additional_info: dict = None) -> None:
         try:
-            current_log = self.load_all
-            if current_log.__len__ > 20:
-                current_log.pop
+            print("name: ", name, " | message: ", message, "| info: ", additional_info)
+            current_log = await self.load_all()
+
+            if len(current_log) > 50:
+                current_log.pop(0)
+
             current_log.append(
                 {
                     "name": name,
                     "message": message,
                     "info": additional_info,
                     "timestamp": machine.RTC().datetime()[:7],
-                },
+                }
             )
             with open("/log.json", "w") as f:
-                ujson.dump(
-                    current_log,
-                    f,
-                )
+                ujson.dump(current_log, f)
         except Exception as e:
-            print("Błąd zapisu loga!? {}:".format(name + ", " + message), e)
+            print(f"Błąd zapisu loga!? {name + ', ' + message}:", e)
 
     async def load_all(self) -> list:
         try:

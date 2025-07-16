@@ -1,17 +1,13 @@
-import gc
-
-print("Free mem at start:", gc.mem_free())
-
 import network, machine
 from credentials import CREDENTIALS
 import time
+from services.json_db import Log
 
 WLAN = network.WLAN(network.STA_IF)
 
 
 def connect_to_wifi():
     _connect_to_wifi(CREDENTIALS["home"][0], CREDENTIALS["home"][1])
-    # Log.add("main", "Wi-Fi connected", {"IP": WLAN.ifconfig()[0]})
 
 
 def _connect_to_wifi(name, password):
@@ -19,27 +15,27 @@ def _connect_to_wifi(name, password):
     WLAN.connect(name, password)
     for _ in range(10):  # wait up to 10s
         if WLAN.isconnected():
-            print(
-                "Wi-Fi connected, IP:",
-                WLAN.ifconfig()[0],
-                "Wlan status:",
-                WLAN.status(),
+            Log.add(
+                "Wi-Fi",
+                "connected",
+                f"IP: {WLAN.ifconfig()[0]}, WLAN status: {WLAN.status()}",
             )
             return True
         time.sleep(1)
+    Log.add(
+        "Wi-Fi",
+        "connection failed",
+    )
     return False
 
 
-from services.http_requests import http_get
-
 connect_to_wifi()
 
+from services.http_requests import http_get
 
 http_get("https://example.com/")
 
 import ntptime
-from services.json_db import Log
-
 from services.web_server import run_web_server
 import uasyncio
 from services.json_db import PlantRepo
@@ -56,11 +52,9 @@ from services.watering import execute_watering
 
 
 async def main():
-    print("Starting main.py...")
+    Log.add("main", "Starting main.py")
 
     initialize_clock()
-
-    ## importing here because, when imported before wifi is connected, creates error where wifi-stack is too small
 
     initialize_from_flash()
 
@@ -69,7 +63,8 @@ async def main():
 
     weather = Weather()
 
-    print(weather.get_weather())
+    Log.add("main", "Weather initialized", f"{weather.get_weather()}")
+
     for plant in plants:
         # schedule daily watering at 6:00 AM
         loop.create_task(schedule_daily_task(6, 0, execute_watering, (plant,)))
@@ -78,11 +73,11 @@ async def main():
             schedule_daily_task(0, 30, execute_iluminating, (plant, weather))
         )
 
+    Log.add("main", "Web server started")
     await run_web_server()
-    print("Web server added to event loop")
+    Log.add("main", "End of main.py")
 
     # określić jak zarządzać tym światłem?
-    # dodać logowanie błędów
 
 
 async def _wifi_monitor():
@@ -99,10 +94,19 @@ def initialize_clock():
     while True:
         try:
             ntptime.settime()
+            Log.add(
+                "main",
+                "RTC initialized from NTP",
+                f"RTC time: {machine.RTC().datetime()}",
+            )
             break
         except OSError as e:
             print(e)
-            print("Retrying to set RTC time via NTP… (trying to re-connect to Wi-Fi)")
+            Log.add(
+                "main",
+                "OSerror initializing RTC from NTP, reconecting to Wi-Fi",
+                {"error": e},
+            )
             connect_to_wifi()
             time.sleep(1)
         except Exception as e:
