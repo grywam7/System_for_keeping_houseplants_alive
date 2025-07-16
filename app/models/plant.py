@@ -42,47 +42,18 @@ class Plant:
         # moisture_sensor.atten(machine.ADC.ATTN_11DB)  # 0-3.3V
         # moisture_sensor.width(machine.ADC.WIDTH_12BIT)  # 12-bit resolution: 0-4095
         # self.moisture_sensor = moisture_sensor
-        self.moisture_sensor = None
 
     @classmethod
     def from_dict(cls, data: dict) -> "Plant":
         return cls(**data)
-        return cls(
-            plant_name=data.get("plant_name"),
-            pot_index=data.get("pot_index"),
-            pump_pin=data.get("pump_pin"),
-            moisture_sensor_pin=data.get("moisture_sensor_pin"),
-            light_pins=data.get("light_pins"),
-            plant_type=data.get("plant_type"),  # TO DO
-            moisture_target=data.get("moisture_target"),
-            planted_on=data.get("planted_on"),
-            is_flowering=data.get("is_flowering"),
-            is_fruiting=data.get("is_fruiting"),
-            moisture_history=data.get("moisture_history"),
-            fruiting_history=data.get("fruiting_history"),
-            flowering_history=data.get("flowering_history"),
-            last_measured_moisture=data.get("last_measured_moisture"),
-            last_watering_duration=data.get("last_watering_duration"),
-        )
+
+    def __repr__(self) -> str:
+        return f"<Plant: pot_index={self.pot_index}>"
 
     def to_dict(self):
-        return dict(self.__dict__)
-        return {
-            "plant_name": self.plant_name,
-            "pot_index": self.pot_index,
-            "pump_pin": self.pump_pin,
-            "moisture_sensor_pin": self.moisture_sensor_pin,
-            "light_pins": self.light_pins,
-            "moisture_target": self.moisture_target,
-            "planted_on": self.planted_on,
-            "is_flowering": self.is_flowering,
-            "is_fruiting": self.is_fruiting,
-            "moisture_history": self.moisture_history,
-            "fruiting_history": self.fruiting_history,
-            "flowering_history": self.flowering_history,
-            "last_measured_moisture": self.last_measured_moisture,
-            "last_watering_duration": self.last_watering_duration,
-        }
+        data = dict(self.__dict__)
+        data.pop("moisture_sensor", None)
+        return data
 
     def set_is_flowering(self, flowering):
         self.is_flowering = flowering

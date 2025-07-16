@@ -58,10 +58,26 @@ class PlantRepo:
 
 
 class Log:
-    async def add(self, name: str, message: str, additional_info: dict = None) -> None:
+    @classmethod
+    def load_all(self) -> list:
         try:
-            print("name: ", name, " | message: ", message, "| info: ", additional_info)
-            current_log = await self.load_all()
+            with open("../log.json", "r") as f:
+                return ujson.load(f)
+        except Exception as e:
+            print("Błąd odczytu loga:", e)
+
+    @classmethod
+    def add(self, name: str, message: str, additional_info: dict = {}) -> None:
+        try:
+            print(
+                "name: ",
+                name,
+                " | message: ",
+                message,
+                "| info: ",
+                ujson.dumps(additional_info),
+            )
+            current_log = self.load_all()
 
             if len(current_log) > 50:
                 current_log.pop(0)
@@ -74,14 +90,7 @@ class Log:
                     "timestamp": machine.RTC().datetime()[:7],
                 }
             )
-            with open("/log.json", "w") as f:
+            with open("../log.json", "w") as f:
                 ujson.dump(current_log, f)
         except Exception as e:
             print(f"Błąd zapisu loga!? {name + ', ' + message}:", e)
-
-    async def load_all(self) -> list:
-        try:
-            with open("/log.json", "r") as f:
-                return ujson.load(f)
-        except Exception as e:
-            print("Błąd odczytu loga:", e)

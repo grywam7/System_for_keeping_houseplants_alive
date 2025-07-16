@@ -56,7 +56,7 @@ async def main():
 
     initialize_clock()
 
-    initialize_from_flash()
+    await initialize_from_flash()
 
     loop = uasyncio.new_event_loop()
     loop.create_task(_wifi_monitor())
@@ -115,10 +115,10 @@ def initialize_clock():
             break
 
 
-def initialize_from_flash():
+async def initialize_from_flash():
     # load all plants from flash
     try:
-        plants[:] = PlantRepo().load_all()
+        plants[:] = await PlantRepo().load_all()
     except Exception as e:
         Log.add("main", "Error loading plants from flash", {"error": e})
 

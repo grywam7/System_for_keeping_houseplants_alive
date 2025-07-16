@@ -12,6 +12,9 @@ class Weather:
         self.sunshine = None
         self.date = None
 
+    def __repr__(self):
+        return f"<Weather for: {self.date}>"
+
     def get_weather(self) -> tuple[dict[int, int], int, int]:
         today = machine.RTC().datetime()[:3]
         if self.date != today:

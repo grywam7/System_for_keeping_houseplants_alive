@@ -5,12 +5,13 @@ plants = []
 plant_types = []
 
 
-def find_plant_by(key, value):
+def find_plant_by(key: str, value) -> Plant | None:
     for plant in plants:
-        for attribute in plant:
-            att_key, att_value = attribute
-            if att_key == key and att_value == value:
-                return plant
+        if getattr(plant, key, None) == value:
+            return plant
+
+        # if plant.to_dict().get(key) == value:
+        # return plant
     return None
 
 
