@@ -67,7 +67,7 @@ async def main():
 
     for plant in plants:
         # schedule daily watering at 6:00 AM
-        loop.create_task(schedule_daily_task(6, 0, execute_watering, (plant,)))
+        loop.create_task(schedule_daily_task(20, 5, execute_watering, (plant,)))
         # schedule daily illumination calculation at 0:30 AM
         loop.create_task(
             schedule_daily_task(0, 30, execute_iluminating, (plant, weather))
@@ -83,7 +83,6 @@ async def main():
 async def _wifi_monitor():
     while True:
         if WLAN.isconnected():
-            print("Wi-Fi is connected")
             await uasyncio.sleep(30)  # sprawdzamy czy jest połączenie, co 30 sekund
         else:
             connect_to_wifi()

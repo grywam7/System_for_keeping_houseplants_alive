@@ -40,17 +40,14 @@ def generate_plants_cards(plants: list) -> str:
         info = plant.to_dict()
         card = '<div class="card"><table>'
         for key, value in info.items():
-            card += f"<tr><td>{key}</td><td><strong>{value}</strong></td></tr>"
+            if key == "pot_index":
+                card += f'<tr><td>Pot Index</td><td><strong><a href="/plant?pot={value}">{value}</a></strong></td></tr>'
+            else:
+                card += f"<tr><td>{key}</td><td><strong>{value}</strong></td></tr>"
         card += "</table>"
         body += card
 
     return html_header + body + html_footer
-
-
-# def generate_plant_site(plant: Plant) -> str:
-# TODO: implement this function
-# This function should generate a detailed HTML page for a single plant
-# using the plant's data.
 
 
 def generate_logs_site() -> str:
@@ -72,12 +69,12 @@ def generate_logs_site() -> str:
 <body>
 <h1>Log Reports</h1>
 <table>
-    <th>
-        <td>Time Stamp</td>
-        <td>Name</td>
-        <td>Message</td>
-        <td>Additional Info</td>
-    </th>
+    <tr>
+        <th>Time Stamp</th>
+        <th>Name</th>
+        <th>Message</th>
+        <th>Additional Info</th>
+    </tr>
 """
     html_footer = """
 </table>
@@ -87,10 +84,10 @@ def generate_logs_site() -> str:
     body = ""
     for log in Log.load_all():
         body += f"""<tr>
-    <td>{log.timestamp}</td>
-    <td>{log.name}</td>
-    <td>{log.message}</td>
-    <td>{log.info}</td>
+    <td>{log["timestamp"]}</td>
+    <td>{log["name"]}</td>
+    <td>{log["message"]}</td>
+    <td>{log["info"]}</td>
 </tr>"""
 
     return html_header + body + html_footer

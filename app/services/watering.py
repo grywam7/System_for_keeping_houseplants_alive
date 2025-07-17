@@ -32,11 +32,11 @@ def _moisture_difference(plant: Plant) -> int:
 
 
 def _calculate_watering(plant: Plant) -> int:
-    xs = plant.moisture_history["moisture_change"]
-    ys = plant.moisture_history["watering_duration"]
+    xs = [h["moisture_change"] for h in plant.moisture_history]
+    ys = [h["watering_duration"] for h in plant.moisture_history]
 
-    if len(xs) < 3:
-        return 300  # not enough data → fallback
+    if len(plant.moisture_history) < 3:
+        return len(plant.moisture_history) * 40  # not enough data → fallback
 
     a, b, c = _polyfit_quadratic(xs, ys)
 
@@ -45,6 +45,12 @@ def _calculate_watering(plant: Plant) -> int:
 
     diff = _moisture_difference(plant)
     val = a * diff * diff + b * diff + c
+    if int(val) > 1000:
+        Log.add(
+            "watering",
+            "Calculated watering duration is too high (more than 1000s), using fallback",
+            {"plant": plant.pot_index, "calculated_duration": val},
+        )
     return max(0, int(val))
 
 

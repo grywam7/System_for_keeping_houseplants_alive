@@ -14,9 +14,9 @@ class Plant:
         planted_on=machine.RTC().datetime()[:3],
         is_flowering=False,
         is_fruiting=False,
-        moisture_history=None,
-        fruiting_history=None,
-        flowering_history=None,
+        moisture_history=[],
+        fruiting_history=[],
+        flowering_history=[],
         last_measured_moisture=0,
         last_watering_duration=0,
     ):
@@ -30,7 +30,7 @@ class Plant:
         self.planted_on = planted_on
         self.is_flowering = is_flowering
         self.is_fruiting = is_fruiting
-        self.moisture_history = moisture_history if moisture_history is None else []
+        self.moisture_history = moisture_history
         self.fruiting_history = fruiting_history
         self.flowering_history = flowering_history
         self.last_measured_moisture = last_measured_moisture
@@ -38,10 +38,10 @@ class Plant:
 
         # SETUP moisture sensor
         # with this setting, wery vet is 1600 (literally water in pot) and dry is 3500
-        # moisture_sensor = machine.ADC(machine.Pin(self.moisture_sensor_pin))
-        # moisture_sensor.atten(machine.ADC.ATTN_11DB)  # 0-3.3V
-        # moisture_sensor.width(machine.ADC.WIDTH_12BIT)  # 12-bit resolution: 0-4095
-        # self.moisture_sensor = moisture_sensor
+        moisture_sensor = machine.ADC(machine.Pin(self.moisture_sensor_pin))
+        moisture_sensor.atten(machine.ADC.ATTN_11DB)  # 0-3.3V
+        moisture_sensor.width(machine.ADC.WIDTH_12BIT)  # 12-bit resolution: 0-4095
+        self.moisture_sensor = moisture_sensor
 
     @classmethod
     def from_dict(cls, data: dict) -> "Plant":
