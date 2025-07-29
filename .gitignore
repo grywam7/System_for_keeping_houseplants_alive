@@ -178,3 +178,4 @@ credentials.py
 /.vscode
 /typings
 .DS_Store
+/app_mpy
