@@ -32,26 +32,28 @@ def _determine_ilumination_time(sunshine, sunrise, sunset):
     ]
 
 
-def _determine_ilumination_type(plant):
-    if plant.is_flowering:
-        return ["blue", "red"]
-    elif plant.is_fruiting:
-        if plant.plant_type.name == "Hot Pepper":
-            return ["red", "purple"]
-        return ["red"]
-    else:
-        return ["blue"]
+# def _determine_ilumination_type(plant):
+#     if plant.is_flowering:
+#         return ["blue", "red"]
+#     elif plant.is_fruiting:
+#         if plant.plant_type.name == "Hot Pepper":
+#             return ["red", "purple"]
+#         return ["red"]
+#     else:
+#         return ["blue"]
+# def _determine_ilumination_type():
+#     return ["red", "blue"]
 
 
 async def _turn_lights_on_for(plant, time):
-    ilumination_type = _determine_ilumination_type(plant)
-    for color, pin in ilumination_type:
-        machine.Pin(plant.light_pins[color], machine.Pin.OUT).on()
+    # ilumination_type = _determine_ilumination_type()
+    # for color in ilumination_type:
+    machine.Pin(plant.light_pins, machine.Pin.OUT).on()
 
     await uasyncio.sleep(time)
 
-    for color, pin in ilumination_type:
-        machine.Pin(plant.light_pins[color], machine.Pin.OUT).off()
+    # for color in ilumination_type:
+    machine.Pin(plant.light_pins, machine.Pin.OUT).off()
 
 
 async def _illumination_scheduler(plant, weather):

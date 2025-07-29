@@ -32,8 +32,8 @@ def _moisture_difference(plant: Plant) -> int:
 
 
 def _calculate_watering(plant: Plant) -> int:
-    xs = [h["moisture_change"] for h in plant.moisture_history]
-    ys = [h["watering_duration"] for h in plant.moisture_history]
+    xs = plant.moisture_changes()
+    ys = plant.watering_durations()
 
     if len(plant.moisture_history) < 3:
         return len(plant.moisture_history) * 40  # not enough data → fallback

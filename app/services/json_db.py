@@ -12,6 +12,10 @@ class PlantRepo:
         try:
             with open(self._filename(pot_index), "r") as f:
                 data = ujson.load(f)
+                Log.add(
+                    "json_db - PlantRepo",
+                    f"Roślina {pot_index} odczytana pomyślnie",
+                )
             return Plant.from_dict(data)
         except Exception as e:
             Log.add(
@@ -29,6 +33,10 @@ class PlantRepo:
                 f"Błąd zapisu rośliny {plant.pot_index}",
                 f"error:{e}",
             )
+        Log.add(
+            "json_db - PlantRepo",
+            f"Roślina {plant.pot_index} zapisana pomyślnie",
+        )
 
     async def load_all(self) -> list:
         plants = []
@@ -79,7 +87,7 @@ class Log:
             )
             current_log = self.load_all()
 
-            if len(current_log) > 50:
+            if len(current_log) > 20:
                 current_log.pop(0)
 
             current_log.append(

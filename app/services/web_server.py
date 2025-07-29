@@ -7,6 +7,7 @@ from services.websites_generator import generate_logs_site, generate_plant_page
 from services.json_db import Log
 import uasyncio
 import ujson
+import gc
 
 app = Microdot()
 Response.default_content_type = "text/html"
@@ -168,4 +169,5 @@ async def plant(req):
 @app.get("/log")
 async def get_log(req):
     Log.add("web_server", "Log page requested")
+    Log.add("web_server", f"Free memory = {gc.mem_free()} bytes")
     return Response(generate_logs_site())

@@ -24,7 +24,7 @@ class Plant:
         self.pot_index = pot_index
         self.pump_pin = pump_pin
         self.moisture_sensor_pin = moisture_sensor_pin
-        self.light_pins = light_pins
+        self.light_pins = dict(light_pins)
         self.plant_type = plant_type  # TO DO, żeby zapisywać ID plant type
         self.moisture_target = moisture_target
         self.planted_on = planted_on
@@ -80,3 +80,9 @@ class Plant:
         else:
             if self.fruiting_history and self.fruiting_history[-1]["end"] is None:
                 self.fruiting_history[-1]["end"] = machine.RTC().datetime()[:3]
+
+    def moisture_changes(self):
+        return [h["moisture_change"] for h in self.moisture_history]
+
+    def watering_durations(self):
+        return [h["watering_duration"] for h in self.moisture_history][:]

@@ -185,7 +185,7 @@ def _predict_next(history):
 
 def generate_plant_page(plant):
     d = plant.to_dict()
-    svg = _make_svg_line(d["moisture_history"] or [])
+    svg = _make_svg_line(plant.moisture_changes() or [])
     flower_next = _predict_next(d["flowering_history"] or [])
     fruit_next = _predict_next(d["fruiting_history"] or [])
 

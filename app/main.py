@@ -36,6 +36,7 @@ from services.http_requests import http_get
 http_get("https://example.com/")
 
 import ntptime
+import gc
 from services.web_server import run_web_server
 import uasyncio
 from services.json_db import PlantRepo
@@ -53,7 +54,7 @@ from services.watering import execute_watering
 
 async def main():
     Log.add("main", "Starting main.py")
-
+    gc.enable()
     initialize_clock()
 
     await initialize_from_flash()
@@ -67,12 +68,13 @@ async def main():
 
     for plant in plants:
         # schedule daily watering at 6:00 AM
-        loop.create_task(schedule_daily_task(20, 5, execute_watering, (plant,)))
+        loop.create_task(schedule_daily_task(6, 10, execute_watering, (plant,)))
         # schedule daily illumination calculation at 0:30 AM
         loop.create_task(
             schedule_daily_task(0, 30, execute_iluminating, (plant, weather))
         )
 
+    Log.add("main", f"Free memory = {gc.mem_free()} bytes")
     Log.add("main", "Web server started")
     await run_web_server()
     Log.add("main", "End of main.py")
@@ -83,7 +85,7 @@ async def main():
 async def _wifi_monitor():
     while True:
         if WLAN.isconnected():
-            await uasyncio.sleep(30)  # sprawdzamy czy jest połączenie, co 30 sekund
+            await uasyncio.sleep(60)  # sprawdzamy czy jest połączenie, co 30 sekund
         else:
             connect_to_wifi()
 
