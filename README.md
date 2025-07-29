@@ -14,3 +14,7 @@ plant, based on previous soil moisture sensor measurements,
 - exposing a web application for plant model management (CRUD
 operations) and display of dynamically generated statistics for each
 plant, such as a moisture chart. 
+
+
+## Important Notice
+As this requires a bit of RAM to run, my advice is to create your own micropython compilation for the ESP-32, without the Bluetooth module. You gain an extra 80KB of free memory, added to the initial 78KB, doubling it, so you don't have to care about the AOM error anymore.
